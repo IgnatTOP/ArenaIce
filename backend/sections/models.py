@@ -68,7 +68,7 @@ class SectionRequest(models.Model):
     ]
     
     section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='requests')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='section_requests')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='section_requests', null=True, blank=True)
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     message = models.TextField(blank=True)

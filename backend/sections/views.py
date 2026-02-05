@@ -58,15 +58,30 @@ class ScheduleViewSet(viewsets.ModelViewSet):
 
 class SectionRequestViewSet(viewsets.ModelViewSet):
     serializer_class = SectionRequestSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
         if self.request.user.is_staff:
             return SectionRequest.objects.all()
-        return SectionRequest.objects.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return SectionRequest.objects.filter(user=self.request.user)
+        return SectionRequest.objects.none()
+    
+    def get_permissions(self):
+        # Разрешить создание заявок для всех (анонимных и авторизованных)
+        if self.action == 'create':
+            from rest_framework.permissions import AllowAny
+            return [AllowAny()]
+        # Для остальных действий требуется авторизация
+        return [IsAuthenticated()]
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, status='pending')
+        # Если пользователь авторизован - привязываем к нему
+        if self.request.user.is_authenticated:
+            serializer.save(user=self.request.user, status='pending')
+        else:
+            # Анонимная заявка - без привязки к пользователю
+            serializer.save(user=None, status='pending')
     
     def update(self, request, *args, **kwargs):
         if not request.user.is_staff:
