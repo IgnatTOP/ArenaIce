@@ -23,6 +23,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isAuthenticated: !!localStorage.getItem('access_token'),
   setUser: (user) => set({ user, isAuthenticated: !!user }),
   logout: () => {
+    // Очищаем токены и данные пользователя
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
     set({ user: null, isAuthenticated: false })

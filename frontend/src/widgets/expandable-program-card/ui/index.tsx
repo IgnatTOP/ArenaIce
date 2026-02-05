@@ -42,7 +42,7 @@ export const ExpandableProgramCard = ({
           animate={{
             opacity: isHovered ? 1 : 0,
           }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.15 }}
         >
           <img
             src={image}
@@ -69,7 +69,7 @@ export const ExpandableProgramCard = ({
 
             {/* Title */}
             <motion.h3
-              className="font-bold leading-tight mb-2 text-2xl md:text-3xl transition-colors duration-300"
+              className="font-bold leading-tight mb-2 text-2xl md:text-3xl transition-colors duration-75"
               animate={{
                 color: isHovered ? '#ffffff' : undefined
               }}
@@ -79,7 +79,7 @@ export const ExpandableProgramCard = ({
 
             {/* Description */}
             <motion.p
-              className="text-sm md:text-base leading-relaxed mb-4 transition-colors duration-300"
+              className="text-sm md:text-base leading-relaxed mb-4 transition-colors duration-75"
               animate={{
                 color: isHovered ? '#e5e7eb' : undefined
               }}
@@ -88,7 +88,7 @@ export const ExpandableProgramCard = ({
             </motion.p>
 
             {/* Price */}
-            <div className={`text-3xl md:text-4xl font-extrabold mb-6 ${isHovered ? 'text-white' : `bg-gradient-to-r ${color} bg-clip-text text-transparent`} transition-all duration-300`}>
+            <div className={`text-3xl md:text-4xl font-extrabold mb-6 ${isHovered ? 'text-white' : `bg-gradient-to-r ${color} bg-clip-text text-transparent`} transition-all duration-75`}>
               {price}
             </div>
 
@@ -105,9 +105,9 @@ export const ExpandableProgramCard = ({
                   }}
                   transition={{ delay: idx * 0.1 }}
                 >
-                  <CheckCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 transition-colors duration-300 ${isHovered ? 'text-green-400' : 'text-green-500'}`} />
+                  <CheckCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 transition-colors duration-75 ${isHovered ? 'text-green-400' : 'text-green-500'}`} />
                   <motion.span
-                    className="text-sm font-medium leading-snug transition-colors duration-300"
+                    className="text-sm font-medium leading-snug transition-colors duration-75"
                     animate={{
                       color: isHovered ? '#f3f4f6' : undefined
                     }}

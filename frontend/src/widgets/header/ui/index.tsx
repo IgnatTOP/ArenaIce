@@ -32,8 +32,9 @@ export const Header = () => {
 
   const handleLogout = () => {
     logout()
-    navigate('/')
     setUserMenuOpen(false)
+    // Перезагружаем страницу для полной очистки кеша
+    window.location.href = '/'
   }
 
   const navLinks = [

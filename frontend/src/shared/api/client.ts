@@ -27,9 +27,29 @@ api.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${data.access}`
           return api(originalRequest)
         } catch {
+          // Токен невалиден - очищаем и пробуем без токена для публичных эндпоинтов
           localStorage.removeItem('access_token')
           localStorage.removeItem('refresh_token')
-          window.location.href = '/login'
+          
+          // Если это публичный эндпоинт, пробуем запрос без токена
+          delete originalRequest.headers.Authorization
+          try {
+            return await api(originalRequest)
+          } catch {
+            // Если все равно не работает, редиректим на логин только для приватных эндпоинтов
+            if (originalRequest.url?.includes('/admin/') || originalRequest.url?.includes('/me')) {
+              window.location.href = '/login'
+            }
+            return Promise.reject(error)
+          }
+        }
+      } else {
+        // Нет refresh токена - пробуем без авторизации для публичных эндпоинтов
+        delete originalRequest.headers.Authorization
+        try {
+          return await api(originalRequest)
+        } catch {
+          return Promise.reject(error)
         }
       }
     }

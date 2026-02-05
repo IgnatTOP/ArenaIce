@@ -23,8 +23,8 @@ class IceBookingViewSet(viewsets.ModelViewSet):
     serializer_class = IceBookingSerializer
     
     def get_permissions(self):
-        if self.action == 'create':
-            # Разрешить всем создавать бронирования (публичный доступ)
+        if self.action in ['create', 'available_slots']:
+            # Разрешить всем создавать бронирования и смотреть доступные слоты (публичный доступ)
             return [AllowAny()]
         return [IsAuthenticated()]
     
@@ -50,7 +50,6 @@ class IceBookingViewSet(viewsets.ModelViewSet):
         return super().partial_update(request, *args, **kwargs)
     
     @action(detail=False, methods=['get'])
-    @permission_classes([AllowAny])
     def available_slots(self, request):
         date_str = request.query_params.get('date')
         if not date_str:
