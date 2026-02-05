@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../shared/api/client'
 import { sectionApi } from '../../entities/section/api'
-import { Card, CardContent, CardHeader, CardTitle, Skeleton, Button, Input, Label, Modal, Badge, Tabs } from '../../shared/ui'
+import { Card, CardContent, CardHeader, CardTitle, Skeleton, Button, Input, Label, Modal, Badge, Tabs, NameInput, EmailInput } from '../../shared/ui'
 import { useAuthStore } from '../../entities/user/model/store'
 import { motion } from 'framer-motion'
 import { Calendar, Clock, Ticket, Users, Edit, Mail, User as UserIcon, Phone, MapPin, Settings } from 'lucide-react'
@@ -452,40 +452,42 @@ export const ProfilePage = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Имя</Label>
-              <Input 
+              <NameInput 
                 autoComplete="given-name"
                 value={editData.first_name || ''} 
                 onChange={(e) => {
                   setEditData({...editData, first_name: e.target.value})
                   if (errors.first_name) setErrors({ ...errors, first_name: '' })
                 }}
+                placeholder="Иван"
                 className={errors.first_name ? 'border-red-500' : ''}
               />
               {errors.first_name && <p className="text-sm text-red-500">{errors.first_name}</p>}
             </div>
             <div className="space-y-2">
               <Label>Фамилия</Label>
-              <Input 
+              <NameInput 
                 autoComplete="family-name"
                 value={editData.last_name || ''} 
                 onChange={(e) => {
                   setEditData({...editData, last_name: e.target.value})
                   if (errors.last_name) setErrors({ ...errors, last_name: '' })
                 }}
+                placeholder="Иванов"
                 className={errors.last_name ? 'border-red-500' : ''}
               />
               {errors.last_name && <p className="text-sm text-red-500">{errors.last_name}</p>}
             </div>
             <div className="space-y-2">
               <Label>Email *</Label>
-              <Input 
-                type="email"
+              <EmailInput 
                 autoComplete="email"
                 value={editData.email || ''} 
                 onChange={(e) => {
                   setEditData({...editData, email: e.target.value})
                   if (errors.email) setErrors({ ...errors, email: '' })
                 }}
+                placeholder="your@email.com"
                 className={errors.email ? 'border-red-500' : ''}
               />
               {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}

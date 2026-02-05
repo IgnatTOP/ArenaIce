@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { api } from '../../shared/api/client'
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '../../shared/ui'
+import { Button, Card, CardContent, CardHeader, CardTitle, EmailInput, NameInput, PhoneInput, Input, Label } from '../../shared/ui'
 import { validators, validateForm } from '@/shared/lib/validators'
 import { useToastStore } from '@/shared/lib/toast'
 import { motion } from 'framer-motion'
@@ -66,9 +66,8 @@ export const RegisterPage = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email *</Label>
-                <Input
+                <EmailInput
                   id="email"
-                  type="email"
                   autoComplete="email"
                   value={formData.email}
                   onChange={(e) => {
@@ -114,7 +113,7 @@ export const RegisterPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="first_name">Имя</Label>
-                  <Input
+                  <NameInput
                     id="first_name"
                     autoComplete="given-name"
                     value={formData.first_name}
@@ -122,13 +121,14 @@ export const RegisterPage = () => {
                       setFormData({ ...formData, first_name: e.target.value })
                       if (errors.first_name) setErrors({ ...errors, first_name: '' })
                     }}
+                    placeholder="Иван"
                     className={errors.first_name ? 'border-red-500' : ''}
                   />
                   {errors.first_name && <p className="text-sm text-red-500">{errors.first_name}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="last_name">Фамилия</Label>
-                  <Input
+                  <NameInput
                     id="last_name"
                     autoComplete="family-name"
                     value={formData.last_name}
@@ -136,6 +136,7 @@ export const RegisterPage = () => {
                       setFormData({ ...formData, last_name: e.target.value })
                       if (errors.last_name) setErrors({ ...errors, last_name: '' })
                     }}
+                    placeholder="Иванов"
                     className={errors.last_name ? 'border-red-500' : ''}
                   />
                   {errors.last_name && <p className="text-sm text-red-500">{errors.last_name}</p>}
@@ -144,33 +145,14 @@ export const RegisterPage = () => {
               
                <div className="space-y-2">
                  <Label htmlFor="phone">Телефон *</Label>
-                 <Input
+                 <PhoneInput
                    id="phone"
-                   type="tel"
                    autoComplete="tel"
                    value={formData.phone}
-                   onChange={(e) => {
-                     let value = e.target.value.replace(/[^\d+]/g, '')
-                     // Автоматически добавляем +7 если начинается с 8 или если пусто
-                     if (value.startsWith('8')) {
-                       value = '+7' + value.slice(1)
-                     } else if (!value.startsWith('+7') && value.length > 0) {
-                       value = '+7' + value.replace(/\D/g, '')
-                     }
-                     
-                     // Форматируем номер
-                     let formatted = value
-                     if (value.startsWith('+7')) {
-                       const digits = value.replace(/\D/g, '')
-                       if (digits.length === 11) {
-                         formatted = `+${digits[0]} (${digits.substring(1, 4)}) ${digits.substring(4, 7)}-${digits.substring(7, 9)}-${digits.substring(9)}`
-                       }
-                     }
-                     
-                     setFormData({ ...formData, phone: formatted })
+                   onChange={(value) => {
+                     setFormData({ ...formData, phone: value })
                      if (errors.phone) setErrors({ ...errors, phone: '' })
                    }}
-                   placeholder="+7 (999) 123-45-67"
                    className={errors.phone ? 'border-red-500' : ''}
                  />
                  {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}

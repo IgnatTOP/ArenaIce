@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { api } from '../../shared/api/client'
 import { useAuthStore } from '../../entities/user/model/store'
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '../../shared/ui'
+import { Button, Card, CardContent, CardHeader, CardTitle, EmailInput, Input, Label } from '../../shared/ui'
 import { useToastStore } from '@/shared/lib/toast'
 import { validators, validateForm } from '@/shared/lib/validators'
 import { motion } from 'framer-motion'
@@ -70,10 +70,9 @@ export const LoginPage = () => {
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10" />
+                  <EmailInput
                     id="email"
-                    type="email"
                     autoComplete="email"
                     value={formData.email}
                     onChange={(e) => {

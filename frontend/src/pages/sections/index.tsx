@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { sectionApi } from '../../entities/section/api'
-import { Button, Card, CardContent, Input, Textarea, Label, Modal } from '../../shared/ui'
+import { Button, Card, CardContent, Input, Textarea, Label, Modal, NameInput, PhoneInput } from '../../shared/ui'
 import { useToastStore } from '@/shared/lib/toast'
 import { useAuthStore } from '../../entities/user/model/store'
 import { validators, validateForm } from '@/shared/lib/validators'
@@ -188,7 +188,7 @@ export const SectionsPage = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name">Ваше имя *</Label>
-            <Input
+            <NameInput
               id="name"
               autoComplete="name"
               value={formData.name}
@@ -204,16 +204,14 @@ export const SectionsPage = () => {
 
           <div className="space-y-2">
             <Label htmlFor="phone">Телефон *</Label>
-            <Input
+            <PhoneInput
               id="phone"
-              type="tel"
               autoComplete="tel"
               value={formData.phone}
-              onChange={(e) => {
-                setFormData({ ...formData, phone: e.target.value })
+              onChange={(value) => {
+                setFormData({ ...formData, phone: value })
                 if (errors.phone) setErrors({ ...errors, phone: '' })
               }}
-              placeholder="+7 (999) 123-45-67"
               className={errors.phone ? 'border-red-500' : ''}
             />
             {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
