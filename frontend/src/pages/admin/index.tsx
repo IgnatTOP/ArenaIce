@@ -329,6 +329,9 @@ export const AdminPage = () => {
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-bold text-lg">{event.title}</h3>
                           <Badge variant="info" size="sm">{event.event_type}</Badge>
+                          <Badge variant={event.is_active ? "success" : "error"} size="sm">
+                            {event.is_active ? "Активно" : "Неактивно"}
+                          </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground mb-3">{event.description}</p>
                         <div className="flex flex-wrap gap-4 text-sm">
@@ -401,6 +404,9 @@ export const AdminPage = () => {
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-bold text-lg">{section.name}</h3>
                           <Badge variant="success" size="sm">{section.section_type}</Badge>
+                          <Badge variant={section.is_active ? "success" : "error"} size="sm">
+                            {section.is_active ? "Активна" : "Неактивна"}
+                          </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground mb-3">{section.description}</p>
                         <div className="flex flex-wrap gap-4 text-sm">
@@ -914,11 +920,22 @@ export const AdminPage = () => {
           <form onSubmit={async (e) => {
             e.preventDefault()
             const form = new FormData()
-            Object.keys(formData).forEach(key => {
-              if (formData[key] !== null && formData[key] !== undefined) {
+            
+            // Добавляем только нужные поля
+            const fieldsToSend = ['title', 'description', 'event_type', 'date', 'price_min', 'price_max']
+            fieldsToSend.forEach(key => {
+              if (formData[key] !== null && formData[key] !== undefined && formData[key] !== '') {
                 form.append(key, formData[key])
               }
             })
+            
+            // Добавляем изображение только если оно выбрано
+            if (formData.image && formData.image instanceof File) {
+              form.append('image', formData.image)
+            }
+            
+            // Добавляем is_active как строку
+            form.append('is_active', formData.is_active !== false ? 'true' : 'false')
             
             if (showModal?.action === 'edit') {
               try {
@@ -928,7 +945,8 @@ export const AdminPage = () => {
                 setFormData({})
                 queryClient.invalidateQueries()
               } catch (e: any) {
-                addToast('Ошибка: ' + (e.response?.data?.detail || e.message), 'error')
+                const errorMsg = e.response?.data?.detail || JSON.stringify(e.response?.data) || e.message
+                addToast('Ошибка: ' + errorMsg, 'error')
               }
             } else {
               try {
@@ -938,7 +956,8 @@ export const AdminPage = () => {
                 setFormData({})
                 queryClient.invalidateQueries()
               } catch (e: any) {
-                addToast('Ошибка: ' + (e.response?.data?.detail || e.message), 'error')
+                const errorMsg = e.response?.data?.detail || JSON.stringify(e.response?.data) || e.message
+                addToast('Ошибка: ' + errorMsg, 'error')
               }
             }
           }} className="space-y-4">
@@ -951,8 +970,16 @@ export const AdminPage = () => {
               <Textarea value={formData.description || ''} onChange={(e) => setFormData({...formData, description: e.target.value})} required />
             </div>
             <div className="space-y-2">
-              <Label>Изображение</Label>
-              <Input type="file" accept="image/*" onChange={(e) => setFormData({...formData, image: e.target.files?.[0]})} required={showModal?.action !== 'edit'} />
+              <Label>Изображение {showModal?.action === 'edit' && '(оставьте пустым, чтобы не менять)'}</Label>
+              <Input 
+                type="file" 
+                accept="image/*" 
+                onChange={(e) => setFormData({...formData, image: e.target.files?.[0]})} 
+                required={showModal?.action !== 'edit'} 
+              />
+              {showModal?.action === 'edit' && formData.image && typeof formData.image === 'string' && (
+                <p className="text-xs text-muted-foreground">Текущее изображение: {formData.image.split('/').pop()}</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -979,6 +1006,16 @@ export const AdminPage = () => {
                 <Label>Цена до</Label>
                 <Input type="number" value={formData.price_max || ''} onChange={(e) => setFormData({...formData, price_max: e.target.value})} required />
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                id="event_active"
+                checked={formData.is_active !== false}
+                onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <Label htmlFor="event_active" className="cursor-pointer">Активно (видно пользователям)</Label>
             </div>
             <Button type="submit" className="w-full">
               {showModal?.action === 'edit' ? 'Обновить' : 'Создать'}

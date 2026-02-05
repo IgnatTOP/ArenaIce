@@ -15,7 +15,7 @@ class Event(models.Model):
     description = models.TextField()
     event_type = models.CharField(max_length=20, choices=EVENT_TYPES)
     date = models.DateTimeField()
-    image = models.ImageField(upload_to='events/')
+    image = models.ImageField(upload_to='events/', blank=True)
     price_min = models.DecimalField(max_digits=10, decimal_places=2)
     price_max = models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField(default=True)

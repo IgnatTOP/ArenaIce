@@ -12,25 +12,28 @@ from events.models import Event
 class TimeSlotViewSet(viewsets.ModelViewSet):
     queryset = TimeSlot.objects.all()
     serializer_class = TimeSlotSerializer
-    permission_classes = [IsAuthenticated]
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
-        return [IsAuthenticated()]
+        # Разрешить всем видеть временные слоты (публичный доступ)
+        return [AllowAny()]
 
 class IceBookingViewSet(viewsets.ModelViewSet):
     serializer_class = IceBookingSerializer
     
     def get_permissions(self):
         if self.action == 'create':
-            return []
+            # Разрешить всем создавать бронирования (публичный доступ)
+            return [AllowAny()]
         return [IsAuthenticated()]
     
     def get_queryset(self):
-        if self.request.user.is_staff:
+        if self.request.user.is_authenticated and self.request.user.is_staff:
             return IceBooking.objects.all()
-        return IceBooking.objects.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return IceBooking.objects.filter(user=self.request.user)
+        return IceBooking.objects.none()
     
     def perform_create(self, serializer):
         user = self.request.user if self.request.user.is_authenticated else None
